@@ -86,7 +86,7 @@ Example:
 sf.startListening('myDataFunc', Protocol.UDP) # extended: ('myDataFunc', Sfevy.Protocol.UDP, buffer=1024, raw=False)
 ```
 
-##### UDP Echo Client/Server Example:
+#### UDP Echo Client/Server Example:
 - Client:
 ```python
 import Sfevy
