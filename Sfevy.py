@@ -80,6 +80,7 @@ class Sockets:
                 break
             connection.close()
             sock.close()
+            
     def gotData(data, addr, callTarget):
         ## Call user function here
         main_module = __import__('__main__')
