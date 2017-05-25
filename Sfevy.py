@@ -7,8 +7,6 @@
 import socket
 import threading
 
-
-
 class Protocol(Enum):
     TCP = 1
     UDP = 2
