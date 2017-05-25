@@ -13,13 +13,13 @@ class Protocol(Enum):
 
 class Sockets:
     def __init__(self, host, port, ip=socket.gethostname()):
-		self.listening = False
+        self.listening = False
         self.IP = ip
-		self.HOST = host
+        self.HOST = host
         self.PORT = port
-	def setHost(host, port):
-		self.HOST = host
-		self.PORT = port
+    def setHost(host, port):
+        self.HOST = host
+        self.PORT = port
     def setAddress(self, ip, port):
         self.IP = ip
         self.PORT = port
@@ -59,8 +59,8 @@ class Sockets:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.bind((self.IP, self.PORT))
             data, addr = sock.recvfrom(buffer)
-			if !raw:
-				gData = data.decode()
+            if !raw:
+                gData = data.decode()
             gAddr = addr[0]
             threading.Thread(target=gotData, args=(gData,gAddr)).start()
             sock.close()
@@ -69,19 +69,19 @@ class Sockets:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.bind((self.IP, self.PORT))
             sock.listen(5)
-			connection, client_address = sock.accept()
+            connection, client_address = sock.accept()
             while True:
             data = connection.recv(buffer)
             if data:
-				if !raw:
-					data = data.decode()
-				threading.Thread(target=gotData, args=(data,client_address,dataHandler)).start()
+                if !raw:
+                    data = data.decode()
+                threading.Thread(target=gotData, args=(data,client_address,dataHandler)).start()
             else:
                 break
-			connection.close()
+            connection.close()
             sock.close()
     def gotData(data, addr, callTarget):
         ## Call user function here
-		main_module = __import__('__main__')
-		callFunc = getattr(main_module, callTarget)
-		callFunc()
+        main_module = __import__('__main__')
+        callFunc = getattr(main_module, callTarget)
+        callFunc()
