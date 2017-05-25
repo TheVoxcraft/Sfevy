@@ -47,7 +47,7 @@ class Sockets:
         sock.connect((self.HOST, self.PORT))
         sock.sendall(sData)
         sock.close()
-    def StartListening(self, dataHandler, pcol, buffer=1024, raw=False)
+    def StartListening(self, dataHandler, pcol, buffer=1024, raw=False):
         if(self.listening == False && pcol == Protocol.UDP):
             threading.Thread(target=_listenUDP, args=(dataHandler, buffer, raw)).start()
         elif(self.listening == False && pcol == Protocol.TCP):
