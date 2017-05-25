@@ -24,6 +24,8 @@ class sockets:
         self.IP = ip
         self.PORT = port
     def sendData(self, data, pcol, raw=False):
+        if not raw:
+            raw = bytes(data, "utf-8")
         if pcol == Protocol.TCP:
             threading.Thread(target=_sendTCPThread, args=(data, raw)).start()
         elif pcol == Protocol.UDP:
