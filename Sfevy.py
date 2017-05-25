@@ -7,17 +7,24 @@
 import socket
 import threading
 
+
+
 class Protocol(Enum):
     TCP = 1
     UDP = 2
 
-class Client:
-    def __init__(self, ip, port):
+class Sockets:
+    def __init__(self, host, port, ip=socket.gethostname()):
+		self.listening = False
+        self.IP = ip
+		self.HOST = host
+        self.PORT = port
+	def setHost(host, port):
+		self.HOST = host
+		self.PORT = port
+    def setAddress(self, ip, port):
         self.IP = ip
         self.PORT = port
-    def setAddress(ip, port):
-        IP = ip
-        PORT = port
     def sendData(self, data, pcol, raw=False):
         if pcol == Protocol.TCP:
             threading.Thread(target=_sendTCPThread, args=(data, raw)).start()
@@ -31,7 +38,7 @@ class Client:
         else:
             sData = data
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
-        sock.sendto(, (self.IP, self.PORT))
+        sock.sendto(, (self.HOST, self.PORT))
         sock.close()
     def _sendTCPThread(self, data, raw):
         if raw == False:
@@ -39,44 +46,41 @@ class Client:
         else:
             sData = data
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP
-        sock.connect((self.IP, self.PORT))
+        sock.connect((self.HOST, self.PORT))
         sock.sendall(sData)
         sock.close()
-        
-class Server:
-    
-    def __init__(self, ip, port):
-        self.listening = False
-        self.IP = ip
-        self.PORT = port
-    def setAddress(self, ip, port):
-        IP = ip
-        PORT = port
-    def StartListening(self, dataHandler, pcol, buffer=1024)
+		
+    def StartListening(self, dataHandler, pcol, buffer=1024, raw=False)
         if(self.listening == False && pcol == Protocol.UDP):
-            threading.Thread(target=_listenUDP, args=(dataHandler, buffer)).start()
+            threading.Thread(target=_listenUDP, args=(dataHandler, buffer, raw)).start()
         elif(self.listening == False && pcol == Protocol.TCP):
-            threading.Thread(target=_listenTCP, args=(dataHandler)).start()
+            threading.Thread(target=_listenTCP, args=(dataHandler, buffer, raw)).start()
         else:
             print("error: Already listening.")
-    def  _listenUDP(dataHandler, buffer):
+    def  _listenUDP(self, dataHandler, buffer, raw):
         while 1:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.bind((self.IP, self.PORT))
             data, addr = sock.recvfrom(buffer)
-            gData = data.decode()
+			if !raw:
+				gData = data.decode()
             gAddr = addr[0]
             threading.Thread(target=gotData, args=(gData,gAddr)).start()
             sock.close()
-    def _listenTCP(dataHandler, buffer): ## fix
+    def _listenTCP(self, dataHandler, buffer, raw):
         while 1:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.bind((self.IP, self.PORT))
             sock.listen(5)
-            
-            gData = data.decode()
-            gAddr = addr[0]
-            threading.Thread(target=gotData, args=(gData,gAddr)).start()
+			connection, client_address = sock.accept()
+            while True:
+            data = connection.recv(buffer)
+            if data:
+				if !raw:
+					threading.Thread(target=gotData, args=(data,client_address)).start()
+            else:
+                break
+			connection.close()
             sock.close()
     def gotData(data, addr):
         ## Call user function here
