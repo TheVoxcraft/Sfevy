@@ -27,9 +27,9 @@ class sockets:
         if not raw:
             raw = bytes(data, "utf-8")
         if pcol == Protocol.TCP:
-            threading.Thread(target=_sendTCPThread, args=(data, raw)).start()
+            threading.Thread(target=sockets._sendTCPThread, args=(self, data, raw)).start()
         elif pcol == Protocol.UDP:
-            threading.Thread(target=_sendUDPThread, args=(data, raw)).start()
+            threading.Thread(target=sockets._sendUDPThread, args=(self, data, raw)).start()
         else:
             print("error: Not avaliable protocol.")
     def _sendUDPThread(self, data, raw):
@@ -51,9 +51,9 @@ class sockets:
         sock.close()
     def startListening(self, dataHandler, pcol, buffer=1024, raw=False):
         if(self.listening == False and pcol == Protocol.UDP):
-            threading.Thread(target=_listenUDP, args=(dataHandler, buffer, raw)).start()
+            threading.Thread(target=sockets._listenUDP, args=(self, dataHandler, buffer, raw)).start()
         elif(self.listening == False and pcol == Protocol.TCP):
-            threading.Thread(target=_listenTCP, args=(dataHandler, buffer, raw)).start()
+            threading.Thread(target=sockets._listenTCP, args=(self, dataHandler, buffer, raw)).start()
         else:
             print("error: Already listening.")
     def  _listenUDP(self, dataHandler, buffer, raw):
