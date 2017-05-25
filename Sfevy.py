@@ -7,11 +7,11 @@
 import socket
 import threading
 
-class Protocol(Enum):
+class Protocol():
     TCP = 1
     UDP = 2
 
-class Sockets:
+class sockets:
     def __init__(self, host, port, ip=socket.gethostname()):
         self.listening = False
         self.IP = ip
@@ -48,9 +48,9 @@ class Sockets:
         sock.sendall(sData)
         sock.close()
     def StartListening(self, dataHandler, pcol, buffer=1024, raw=False):
-        if(self.listening == False && pcol == Protocol.UDP):
+        if(self.listening == False and pcol == Protocol.UDP):
             threading.Thread(target=_listenUDP, args=(dataHandler, buffer, raw)).start()
-        elif(self.listening == False && pcol == Protocol.TCP):
+        elif(self.listening == False and pcol == Protocol.TCP):
             threading.Thread(target=_listenTCP, args=(dataHandler, buffer, raw)).start()
         else:
             print("error: Already listening.")
@@ -59,7 +59,7 @@ class Sockets:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.bind((self.IP, self.PORT))
             data, addr = sock.recvfrom(buffer)
-            if !raw:
+            if not raw:
                 gData = data.decode()
             gAddr = addr[0]
             threading.Thread(target=gotData, args=(gData,gAddr)).start()
@@ -71,15 +71,15 @@ class Sockets:
             sock.listen(5)
             connection, client_address = sock.accept()
             while True:
-            data = connection.recv(buffer)
-            if data:
-                if !raw:
-                    data = data.decode()
-                threading.Thread(target=gotData, args=(data,client_address,dataHandler)).start()
-            else:
-                break
-            connection.close()
-            sock.close()
+                data = connection.recv(buffer)
+                if data:
+                    if not raw:
+                        data = data.decode()
+                    threading.Thread(target=gotData, args=(data,client_address,dataHandler)).start()
+                else:
+                    break
+                connection.close()
+                sock.close()
     def gotData(data, addr, callTarget):
         ## Call user function here
         main_module = __import__('__main__')
