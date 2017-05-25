@@ -47,7 +47,6 @@ class Sockets:
         sock.connect((self.HOST, self.PORT))
         sock.sendall(sData)
         sock.close()
-		
     def StartListening(self, dataHandler, pcol, buffer=1024, raw=False)
         if(self.listening == False && pcol == Protocol.UDP):
             threading.Thread(target=_listenUDP, args=(dataHandler, buffer, raw)).start()
@@ -75,10 +74,13 @@ class Sockets:
             data = connection.recv(buffer)
             if data:
 				if !raw:
-					threading.Thread(target=gotData, args=(data,client_address)).start()
+					threading.Thread(target=gotData, args=(data,client_address,dataHandler)).start()
             else:
                 break
 			connection.close()
             sock.close()
-    def gotData(data, addr):
+    def gotData(data, addr, callTarget):
         ## Call user function here
+		main_module = __import__('__main__')
+		callFunc = getattr(main_module, callTarget)
+		callFunc()
