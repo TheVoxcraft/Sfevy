@@ -36,7 +36,7 @@ class Sockets:
         else:
             sData = data
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
-        sock.sendto(, (self.HOST, self.PORT))
+        sock.sendto((self.HOST, self.PORT))
         sock.close()
     def _sendTCPThread(self, data, raw):
         if raw == False:
@@ -80,7 +80,6 @@ class Sockets:
                 break
             connection.close()
             sock.close()
-            
     def gotData(data, addr, callTarget):
         ## Call user function here
         main_module = __import__('__main__')
