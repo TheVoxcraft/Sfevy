@@ -62,7 +62,7 @@ class sockets:
             if not raw:
                 gData = data.decode()
             gAddr = addr[0]
-            threading.Thread(target=gotData, args=(gData,gAddr)).start()
+            threading.Thread(target=_gotData, args=(gData,gAddr)).start()
             sock.close()
     def _listenTCP(self, dataHandler, buffer, raw):
         while 1:
@@ -75,12 +75,12 @@ class sockets:
                 if data:
                     if not raw:
                         data = data.decode()
-                    threading.Thread(target=gotData, args=(data,client_address,dataHandler)).start()
+                    threading.Thread(target=_gotData, args=(data,client_address,dataHandler)).start()
                 else:
                     break
                 connection.close()
                 sock.close()
-    def gotData(data, addr, callTarget):
+    def _gotData(data, addr, callTarget):
         ## Call user function here
         main_module = __import__('__main__')
         callFunc = getattr(main_module, callTarget)
