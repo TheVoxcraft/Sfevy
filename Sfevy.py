@@ -84,4 +84,4 @@ class sockets:
         ## Call user function here
         main_module = __import__('__main__')
         callFunc = getattr(main_module, callTarget)
-        callFunc()
+        callFunc(data, addr)
