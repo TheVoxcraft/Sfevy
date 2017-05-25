@@ -74,7 +74,8 @@ class Sockets:
             data = connection.recv(buffer)
             if data:
 				if !raw:
-					threading.Thread(target=gotData, args=(data,client_address,dataHandler)).start()
+					data = data.decode()
+				threading.Thread(target=gotData, args=(data,client_address,dataHandler)).start()
             else:
                 break
 			connection.close()
