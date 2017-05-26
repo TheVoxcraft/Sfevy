@@ -24,30 +24,23 @@ class sockets:
         self.IP = ip
         self.PORT = port
     def sendData(self, data, pcol, raw=False):
-        if not raw:
-            raw = bytes(data, "utf-8")
+        if raw == False:
+            data = bytes(data, "utf-8")
+        
         if pcol == Protocol.TCP:
-            threading.Thread(target=sockets._sendTCPThread, args=(self, data, raw)).start()
+            threading.Thread(target=sockets._sendTCPThread, args=(self, data)).start()
         elif pcol == Protocol.UDP:
-            threading.Thread(target=sockets._sendUDPThread, args=(self, data, raw)).start()
+            threading.Thread(target=sockets._sendUDPThread, args=(self, data)).start()
         else:
             print("error: Not avaliable protocol.")
-    def _sendUDPThread(self, data, raw):
-        if raw == False:
-            sData = bytes(data, "utf-8")
-        else:
-            sData = data
+    def _sendUDPThread(self, data):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
-        sock.sendto((self.HOST, self.PORT))
+        sock.sendto(data, (self.HOST, self.PORT))
         sock.close()
-    def _sendTCPThread(self, data, raw):
-        if raw == False:
-            sData = bytes(data, "utf-8")
-        else:
-            sData = data
+    def _sendTCPThread(self, data):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP
         sock.connect((self.HOST, self.PORT))
-        sock.sendall(sData)
+        sock.sendall(data)
         sock.close()
     def startListening(self, dataHandler, pcol, buffer=1024, raw=False):
         if(self.listening == False and pcol == Protocol.UDP):
@@ -64,7 +57,7 @@ class sockets:
             if not raw:
                 gData = data.decode()
             gAddr = addr[0]
-            threading.Thread(target=_gotData, args=(gData,gAddr)).start()
+            threading.Thread(target=sockets._gotData, args=(gData,gAddr,dataHandler)).start()
             sock.close()
     def _listenTCP(self, dataHandler, buffer, raw):
         while 1:
@@ -77,7 +70,7 @@ class sockets:
                 if data:
                     if not raw:
                         data = data.decode()
-                    threading.Thread(target=_gotData, args=(data,client_address,dataHandler)).start()
+                    threading.Thread(target=sockets._gotData, args=(data,client_address,dataHandler)).start()
                 else:
                     break
                 connection.close()
